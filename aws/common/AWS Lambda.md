@@ -164,3 +164,50 @@ ex) `Lambda가 SQS 메시지를 처리하고 S3에 저장`
 
 Lambda Console > 함수 페이지 > 함수 선택 > 구성(Configuration) > 권한 (Permissions) > 리소스 기반 정책 > 정책 문서 보기   
 ▶ `다른 계정 또는 AWS 서비스가 해당 함수에 액세스하려고 할 때 적용되는 권한이 표시되어 있다.`
+
+
+<br>
+
+## ✅ Lambda 외부 라이브러리 이용 방법
+AWS Lambda는 서버리스 함수이다.  
+작성한 코드를 실행해주는 환경이지만, 기본 Python 실행 환경만 제공해주고,  
+Pandas, Pyarrow, numpy 등 외부 라이브러리들은 제공되지 않는다.
+
+- Lambda는 가벼운 실행 환경이기 때문에 무거운 패키지를 기본 제공하지 않는다.  
+▶ 직접 묶거나, 레이어로 따로 관리해야 함!!
+
+<br>
+
+### 🔷 zip 패키징해서 함께 업로드 (local에서 압축)
+> 함수 코드 + 외부 라이브러리를 모두 zip으로 묶어서 Lambda에 업로드하는 방법
+```
+my-function/
+├── lambda_function.py
+├── pyarrow/
+│   └── ...
+└── ...
+```
+1. `pip install pyarrow -t ./my-function/`: 해당 폴더에 라이브러리 파일 다운로드
+2. `lambda_function.py`도 같은 폴더에 넣기
+3. my-function/ 폴더 자체를 `zip으로 압축`
+4. `Lambda에 zip 파일 업로드`
+
+<br>
+
+### 🔷 Lambda Layer 사용
+> 외부 라이브러리를 별도로 Layer라는 형태로 등록하고, Lambda 함수에 연결하여 사용하는 방식
+```
+python/
+└── lib/
+    └── python3.9/
+        └── site-packages/
+            └── pyarrow/
+```
+
+1. `pip install pyarrow -t python/lib/python3.9/site_packages/` (운영체제 Linux여야 함)
+2. python/ 디렉토리를 zip으로 압축 →  `pyarrow-layer.zip`
+3. AWS Lambda Console에서 `layer 생성` → `zip 업로드`
+4. Lambda 함수에서 해당 `레이어를 추가`
+
+
+![image](https://github.com/user-attachments/assets/b06c2fbd-64cc-446c-8b44-dcea99b058fa)
