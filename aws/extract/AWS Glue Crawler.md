@@ -5,6 +5,8 @@ S3 등의 데이터를 스캔하여 자동으로 테이블 생성
 
 +) 실무 흐름: S3에 저장된 JSON → Crawler 실행 → Glue 메타데이터 → Athena에서 SQL 분석
 
+<br>
+
 ## ✅ Crawler 기본 원리
 AWS Glue Crawler는 S3에 저장된 JSON, CSV, Parquet, ORC 등 다양한 구조화/반구조화된 파일 포맷을 스캔해서 AWS Glue Data Catalog 테이블을 자동 생성해준다.  
 
@@ -22,9 +24,11 @@ Crawler는 모든 필드를 자동 분석하여 테이블화하기 때문에 원
 }
 ```
 
+<br>
+
 ### 🔷 Catalog 테이블 형태
-🔥 첫 데이터가 중요하다! 첫 데이터 타입으로 설정됨!
-S3 경로 지정 > 각 파일의 구조를 샘플링(1~5개 파일) > 데이터 타입과 필드 추론 > 추론된 스키마로 Glue Data Catalog에 테이블 등록
+🔥 첫 데이터가 중요하다! 첫 데이터 타입으로 설정됨!  
+S3 경로 지정 > 각 파일의 구조를 샘플링(1~5개 파일) > 데이터 타입과 필드 추론 > 추론된 스키마로 Glue Data Catalog에 테이블 등록  
 ![](https://velog.velcdn.com/images/goozip2/post/ca7ec8a2-7590-4399-a21f-9a60d99fe950/image.png)
 
 <br>
@@ -80,11 +84,15 @@ Resources:
 
 ```
 
+<br>
+
 ### 🔷 AWS Console에서 배포 (GUI 방식)
 1. AWS Management Console 접속
 2. 스택 생성 > 템플릿 파일 업로드 > .yaml 파일 업로드
 3. 스택 이름 입력
 4. IAM Role 등 확인 후, 스택 생성 버튼 클릭
+
+<br>
 
 ### 🔷 AWS CLI에서 배포
 ```bash
@@ -177,10 +185,10 @@ aws cloudformation execute-change-set \
   --stack-name iot-crawler-stack \
   --change-set-name crawler-change-1
 ```
-▶ 해당 변경 내용이 기존 CloudFormation 스택에 반영됨
-▶ 기존 리소스들이 수정되거나 교체됨
-🔥 변경된 내용은 템플릿에 남지는 않고, AWS 내부에만 적용됨!!
-▶ `템플릿 파일 자체는 직접 로컬에서 관리하거나 Git 등으로 추적해야 함!!!`
+▶ 해당 변경 내용이 기존 CloudFormation 스택에 반영됨  
+▶ 기존 리소스들이 수정되거나 교체됨  
+🔥 변경된 내용은 템플릿에 남지는 않고, AWS 내부에만 적용됨!!  
+▶ `템플릿 파일 자체는 직접 로컬에서 관리하거나 Git 등으로 추적해야 함!!!`  
 
 
 <br>
