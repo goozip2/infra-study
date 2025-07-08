@@ -90,6 +90,40 @@ Lambda Console, AWS CLI, AWS SDK 중 하나를 사용하여 Lambda 함수 직접
 
 <br>
 
+#### ➕ Lambda 자동 실행을 위한 트리거 종류
+![image](https://github.com/user-attachments/assets/f3aba7ce-b2c1-4aa9-8832-e42c0d2c7ae8)
+
+1. `Lambda를 EventBridge로 자동 실행 (스케줄링)`
+```bash
+# 5분마다 실행하는 EventBridge rule 생성 (CLI 예시)
+aws events put-rule \
+  --schedule-expression "rate(5 minutes)" \
+  --name "Every5Minutes"
+
+aws lambda add-permission \
+  --function-name your-lambda-func \
+  --statement-id "AllowExecutionFromEventBridge" \
+  --action 'lambda:InvokeFunction' \
+  --principal events.amazonaws.com \
+  --source-arn arn:aws:events:region:account-id:rule/Every5Minutes
+
+aws events put-targets \
+  --rule "Every5Minutes" \
+  --targets "Id"="1","Arn"="your-lambda-arn"
+```
+
+2. `Lambda를 IoT Rule로 자동 실행 (실시간 처리)`
+Rule의 Action을 Lambda 함수 호출로 지정하면, 센서가 MQTT 메시지를 보낼 때마다 Lambda 자동 실행!!
+```sql
+-- IoT SQL Example
+SELECT *
+FROM 'sensor/topic'
+```
+
+
+
+<br>
+
 ### 🔷 Event Source Mapping(폴링 주기)
 Lambda가 SQS, Kinesis 등 대기열/스트림에서 데이터를 감시(폴링)하고, 새 데이터가 있으면 Lambda를 간접 호출하는 방식
 - 주기적으로 Queue/Stream 폴링하여 Batch size만큼 이벤트를 가져와 처리
